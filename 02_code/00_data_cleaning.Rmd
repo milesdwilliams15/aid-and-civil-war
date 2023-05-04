@@ -1,0 +1,329 @@
+---
+title: "Data Cleaning"
+output: github_document
+---
+
+
+## Session Setup
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
+## Packages
+library(tidyverse)     # Tools and syntax
+library(peacesciencer) # Conflict and dyadic data
+library(WDI)           # World Bank data
+library(countrycode)   # To help cross-walk datasets
+```
+
+
+## Reading in Data
+
+### ODA/Foreign Aid
+
+First, let's deal with ODA data. As noted below, this comes from the OECD.stat database and consists of total ODA commitments from DAC member countries to developing countries. It covers 1966 to 2021.
+
+```{r}
+## OECD Aid Data
+## - Downloaded 05-03-2023
+## - Aid (ODA) commitments to countries and regions [DAC3a]
+## - Total commitments in 2021 US dollars
+oecd <- read_csv(
+  here::here(
+    "01_data",  
+    "oecd_oda_commitments.csv"
+  )
+)
+```
+
+With the data read in, I next need to do some cleaning to help cross-walk it with other datasets.
+
+```{r}
+glimpse(oecd)
+oecd %>%
+  transmute(
+    donor = countrycode(
+      Donor,
+      "country.name",
+      "country.name"
+    ),
+    recipient = countrycode(
+      Recipient,
+      "country.name",
+      "country.name"
+    ),
+    year = Year,
+    oda_millions = Value
+  ) %>%
+  drop_na(recipient, donor) -> oecd
+summary(oecd)
+```
+
+Alright, there are probably some missing dyads here. Let's fix that by making a set of all possible combinations of donors and recipients over time:
+
+```{r}
+dry <- expand_grid(
+  donor = unique(oecd$donor),
+  recipient = unique(oecd$recipient),
+  year = unique(oecd$year)
+)
+dim(dry) # should by 299,040 dyad-years
+```
+
+Okay, let's join together:
+
+```{r}
+oecd <- left_join(dry, oecd)
+```
+
+One final thing. Let's sort this by years.
+
+```{r}
+oecd <- arrange(oecd, year)
+```
+
+Oh, and I should probably make an indicator to alert me to when certain donors are inactive. I'd also like to convert NAs to zero.
+
+```{r}
+oecd %>%
+  group_by(donor, year) %>%
+  mutate(
+    donor_active = ifelse(
+      sum(!is.na(oda_millions)) > 0,
+      1, 0
+    )
+  ) %>%
+  ungroup() %>%
+  mutate(
+    oda_millions = replace_na(oda_millions, 0)
+  ) -> oecd
+```
+
+Okay that's done. Let's move to some dyadic data.
+
+### Conflict and dyadic data
+
+I'm using data accessible via the `{peacesciencer}` package to get data on conflict and other dyadic factors relevant for the analysis.
+
+Here's the code to pull together the relevant data:
+
+```{r}
+## Create dyad-year base (this is directed by default)
+create_dyadyears(
+  subset_years = 1966:2021
+) %>%
+  
+  ## include GW codes, too
+  add_gwcode_to_cow() %>%
+  
+  ## Adding in some covariates
+  add_atop_alliance() %>%
+  add_capital_distance() %>%
+  add_cow_trade() %>%
+  add_democracy() %>%
+  add_sdp_gdp() %>%
+  add_fpsim() %>%
+  add_igos() -> ps_data
+```
+
+Annoyingly I have to do conflict data at the state-year level. Below I pull together the relevant data. Then I'll merge to the data above.
+
+```{r}
+create_stateyears(
+  subset_years = 1996:2021
+) %>%
+  add_gwcode_to_cow() %>%
+  add_ucdp_acd(
+    type = c("intrastate",
+             "II")
+  ) -> ucdp_data
+```
+
+Let's prep for some cross-walking:
+
+```{r}
+ps_data %>%
+  mutate(
+    donor = countrycode(
+      ccode1,
+      "cown",
+      "country.name"
+    ),
+    recipient = countrycode(
+      ccode2,
+      "cown",
+      "country.name"
+    )
+  ) -> ps_data
+ucdp_data %>%
+  mutate(
+    recipient = countrycode(
+      ccode,
+      "cown",
+      "country.name"
+    )
+  ) -> ucdp_data
+```
+
+Let's merge these:
+
+```{r}
+ps_data <- left_join(ps_data, ucdp_data)
+```
+
+### Some gravity/distance data
+
+I want some covariates for colonial past and maybe an alternative measure of distance. Here's come code to download and access data from CEPII.
+
+```{r}
+distance_geo <- haven::read_dta(
+  here::here("01_data","dist_cepii.dta")
+)
+distance_geo %>%
+  mutate(
+    donor = countrycode(
+      iso_o,
+      "iso3c",
+      "country.name"
+    ),
+    recipient = countrycode(
+      iso_d,
+      "iso3c",
+      "country.name"
+    )
+  ) -> distance_geo
+```
+
+
+Alright, on to the World Bank!
+
+
+### World Bank data
+
+What I really need here is a measure related to disasters. Thankfully, the WB has a variable on the number of displaced persons due to natural disasters.
+
+```{r}
+# WDIsearch("disaster") %>% as_tibble() %>% view
+# I need: VC.IDP.NWDS
+WDI(
+  country = "all",
+  indicator = "VC.IDP.NWDS",
+  start = 1966
+) -> disaster_data
+
+## Some recodes
+disaster_data %>%
+  transmute(
+    recipient = countrycode(
+      country,
+      "country.name",
+      "country.name"
+    ),
+    year,
+    displaced_disaster = VC.IDP.NWDS
+  ) %>%
+  drop_na(recipient) -> disaster_data
+
+## convert NAs to zero
+
+disaster_data %>%
+  mutate(
+    displaced_disaster = replace_na(
+      displaced_disaster, 0
+    )
+  ) -> disaster_data
+```
+
+### Some migration data
+
+```{r}
+mig_data <- read_csv(
+  here::here("01_data", "oecd_migration_stock.csv")
+)
+mig_data %>%
+  transmute(
+    donor = countrycode(
+      Country,
+      "country.name",
+      "country.name"
+    ),
+    recipient = countrycode(
+      `Country of birth/nationality`,
+      "country.name",
+      "country.name"
+    ),
+    year = Year,
+    migrants = Value
+  ) -> mig_data
+mig_data <- mig_data %>%
+  drop_na(donor, recipient)
+```
+
+
+## Combining
+
+Okay, let's work on combining these.
+
+```{r}
+## Merge peacesciencer data with aid data
+full_dt <- left_join(oecd, ps_data)
+## check dimensions
+nrow(full_dt) == nrow(oecd) # good
+
+## Merge with gravity/distance data
+full_dt <- left_join(full_dt, distance_geo)
+## check dimensions
+nrow(full_dt) == nrow(oecd) # good
+
+## Merge with disaster data
+full_dt <- left_join(full_dt, disaster_data)
+## check dimensions
+nrow(full_dt) == nrow(oecd) # good
+
+## Merge with migration data
+full_dt <- left_join(full_dt, mig_data)
+## check dimensions
+nrow(full_dt) == nrow(oecd)
+```
+
+## Final cleaning
+
+Alright, let's put the final coat of paint on this. Basically, I want to just clean up some variable names and deal with some possible missing values.
+
+```{r}
+## Drop some redundant country codes
+full_dt %>%
+  select(
+    -c(ccode1:gwcode2, ccode:gwcode, conflict_ids:iso_d)
+  ) -> full_dt
+
+## Oh, and drop some values for donors
+full_dt %>%
+  mutate(
+    imports = flow1,
+    exports = flow2
+  ) -> full_dt
+```
+
+Time for some imputation using random forests. To see more about the method look at the help file for missRanger(). Be patient with this bit.
+
+```{r}
+# library(missRanger)
+# imputed_dt <- missRanger(
+#   full_dt,
+#   pmm.k = 3
+# )
+```
+
+
+## Save
+
+I'll save the final data in the 01_data folder:
+
+```{r}
+write_csv(
+  full_dt,
+  here::here("01_data", "final_data.csv")
+)
+```
+

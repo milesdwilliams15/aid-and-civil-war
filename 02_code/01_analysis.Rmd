@@ -1,0 +1,119 @@
+---
+title: "Analysis"
+output: github_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(estimatr)
+library(coolorrr)
+library(texreg)
+set_theme()
+set_palette()
+```
+
+First read in the data:
+
+```{r}
+Data <- read_csv(
+  here::here("01_data", "final_data.csv")
+)
+Data <- Data %>% filter(donor_active == 1,
+                        year %in% 1995:2019)
+```
+
+Next, estimate models. First, with donor and year FEs:
+
+```{r}
+base_form <- asinh(oda_millions) ~
+  ucdpongoing + atop_defense +
+  asinh(distw) + kappavv + asinh(exports) + asinh(imports) +
+  colony + wbpopest2 + v2x_polyarchy2 + sdpest2 + asinh(migrants)
+fit1 <- lm_robust(
+  base_form,
+  fixed_effects = ~ donor + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit2 <- lm_robust(
+  update(base_form, ~ . + ucdpongoing:kappavv),
+  fixed_effects = ~ donor + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit3 <- lm_robust(
+  update(base_form, ~ . + ucdpongoing:asinh(exports)),
+  fixed_effects = ~ donor + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit4 <- lm_robust(
+  update(base_form, ~ . + ucdpongoing:asinh(migrants)),
+  fixed_effects = ~ donor + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+list(fit1, fit2, fit3, fit4) %>%
+  map(tidy) %>%
+  reduce(bind_rows) %>%
+  filter(
+    str_detect(
+      term, "ucdpongoing|ucdpongoing:kappavv|ucdpongoing:asinh(exports)|ucdpongoing:asinh(migrants)"
+    )
+  ) %>%
+  mutate(
+    across(estimate:conf.high, ~ round(.x, 3))
+  )
+
+```
+
+
+Then with dyad and year FEs:
+
+```{r}
+fit5 <- lm_robust(
+  base_form,
+  fixed_effects = ~ paste0(donor, recipient) + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit6 <- lm_robust(
+  update(base_form, ~ . + ucdpongoing:kappavv),
+  fixed_effects = ~ paste0(donor, recipient) + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit7 <- lm_robust(
+  update(base_form, ~ . + ucdpongoing:asinh(exports)),
+  fixed_effects = ~ paste0(donor, recipient) + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit8 <- lm_robust(
+  update(base_form, ~ . + ucdpongoing:asinh(migrants)),
+  fixed_effects = ~ paste0(donor, recipient) + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+list(fit5, fit6, fit7, fit8) %>%
+  map(tidy) %>%
+  reduce(bind_rows) %>%
+  filter(
+    str_detect(
+      term, "ucdpongoing|ucdpongoing:kappavv|ucdpongoing:asinh(exports)|ucdpongoing:asinh(migrants)"
+    )
+  ) %>%
+  mutate(
+    across(estimate:conf.high, ~ round(.x, 3))
+  )
+```
+
