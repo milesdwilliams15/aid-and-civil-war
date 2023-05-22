@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2017.8.26)  22 MAY 2023 12:31
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2017.8.26)  22 MAY 2023 16:43
 entering extended mode
 **./00_draft.tex
 (00_draft.tex
@@ -688,12 +688,12 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip60
 )
-Package hyperref Info: Option `breaklinks' set `true' on input line 135.
+Package hyperref Info: Option `breaklinks' set `true' on input line 128.
 
 Package hyperref Warning: Option `bookmarks' has already been used,
-(hyperref)                setting the option has no effect on input line 135.
+(hyperref)                setting the option has no effect on input line 128.
 
-Package hyperref Info: Option `colorlinks' set `true' on input line 135.
+Package hyperref Info: Option `colorlinks' set `true' on input line 128.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\placeins\placeins.sty"
 Package: placeins 2005/04/18  v 2.2
 )
@@ -780,23 +780,23 @@ LaTeX Warning: Label `table:coefficients' multiply defined.
 )
 \openout1 = `00_draft.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 179.
-LaTeX Font Info:    ... okay on input line 179.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 179.
-LaTeX Font Info:    ... okay on input line 179.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 179.
-LaTeX Font Info:    ... okay on input line 179.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 179.
-LaTeX Font Info:    ... okay on input line 179.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 179.
-LaTeX Font Info:    ... okay on input line 179.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 179.
-LaTeX Font Info:    ... okay on input line 179.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 179.
-LaTeX Font Info:    ... okay on input line 179.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 179.
-LaTeX Font Info:    ... okay on input line 179.
-LaTeX Font Info:    Try loading font information for T1+ppl on input line 179.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 172.
+LaTeX Font Info:    ... okay on input line 172.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 172.
+LaTeX Font Info:    ... okay on input line 172.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 172.
+LaTeX Font Info:    ... okay on input line 172.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 172.
+LaTeX Font Info:    ... okay on input line 172.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 172.
+LaTeX Font Info:    ... okay on input line 172.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 172.
+LaTeX Font Info:    ... okay on input line 172.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 172.
+LaTeX Font Info:    ... okay on input line 172.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 172.
+LaTeX Font Info:    ... okay on input line 172.
+LaTeX Font Info:    Try loading font information for T1+ppl on input line 172.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\t1ppl.fd"
 File: t1ppl.fd 2001/06/04 font definitions for T1/ppl.
 )
@@ -861,7 +861,7 @@ G,.JBIG2,.JB2,.eps]
 
 Package hyperref Warning: Draft mode on.
 
-Package hyperref Info: Link coloring ON on input line 179.
+Package hyperref Info: Link coloring ON on input line 172.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2016/05/21 v2.44 Cross-referencing by name of section
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
@@ -869,194 +869,152 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count143
 )
-LaTeX Info: Redefining \ref on input line 179.
-LaTeX Info: Redefining \pageref on input line 179.
-LaTeX Info: Redefining \nameref on input line 179.
-LaTeX Font Info:    Calculating math sizes for size <18> on input line 190.
-LaTeX Font Info:    Try loading font information for OT1+ppl on input line 190.
+LaTeX Info: Redefining \ref on input line 172.
+LaTeX Info: Redefining \pageref on input line 172.
+LaTeX Info: Redefining \nameref on input line 172.
+LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <12> not available
+(Font)              Font shape `T1/ppl/b/n' tried instead on input line 189.
+[1
+
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] [2] [3]
+Overfull \hbox (4.01183pt too wide) in paragraph at lines 330--336
+\T1/ppl/m/n/12 par-tic-u-larly eco-nomic and gov-er-nance/social aid, but more 
+hu-man-i-tar-ian as-sis-tance. They
+ []
+
+[4] [5]
+LaTeX Font Info:    Try loading font information for OT1+ppl on input line 386.
 
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1ppl.fd"
 File: ot1ppl.fd 2001/06/04 font definitions for OT1/ppl.
 )
-LaTeX Font Info:    Try loading font information for OML+zplm on input line 190
+LaTeX Font Info:    Try loading font information for OML+zplm on input line 386
 .
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\omlzplm.fd"
 File: omlzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OML/zplm.
 )
-LaTeX Font Info:    Try loading font information for OMS+zplm on input line 190
+LaTeX Font Info:    Try loading font information for OMS+zplm on input line 386
 .
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\omszplm.fd"
 File: omszplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMS/zplm.
 )
-LaTeX Font Info:    Try loading font information for OMX+zplm on input line 190
+LaTeX Font Info:    Try loading font information for OMX+zplm on input line 386
 .
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\omxzplm.fd"
 File: omxzplm.fd 2002/09/08 Fontinst v1.914 font definitions for OMX/zplm.
 )
-LaTeX Font Info:    Try loading font information for OT1+zplm on input line 190
+LaTeX Font Info:    Try loading font information for OT1+zplm on input line 386
 .
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\ot1zplm.fd"
 File: ot1zplm.fd 2002/09/08 Fontinst v1.914 font definitions for OT1/zplm.
 )
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 18.75613pt on input line 190.
+(Font)              scaled to size 12.50409pt on input line 386.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 14.25455pt on input line 190.
+(Font)              scaled to size 9.37807pt on input line 386.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 11.25378pt on input line 190.
+(Font)              scaled to size 7.29405pt on input line 386.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 18.75613pt on input line 190.
+(Font)              scaled to size 12.50409pt on input line 386.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 14.25455pt on input line 190.
+(Font)              scaled to size 9.37807pt on input line 386.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 11.25378pt on input line 190.
-LaTeX Font Info:    Try loading font information for OMS+ppl on input line 190.
-
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\omsppl.fd"
-File: omsppl.fd 
-)
-LaTeX Font Info:    Font shape `OMS/ppl/m/n' in size <13.6799> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 190.
-
-LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <13.6799> not available
-(Font)              size <14.4> substituted on input line 190.
-
+(Font)              scaled to size 7.29405pt on input line 386.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 10.42007pt on input line 190.
+(Font)              scaled to size 10.42007pt on input line 386.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 7.91925pt on input line 190.
+(Font)              scaled to size 7.91925pt on input line 386.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 6.25204pt on input line 190.
+(Font)              scaled to size 6.25204pt on input line 386.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 10.42007pt on input line 190.
+(Font)              scaled to size 10.42007pt on input line 386.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 7.91925pt on input line 190.
+(Font)              scaled to size 7.91925pt on input line 386.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 6.25204pt on input line 190.
-LaTeX Font Info:    Font shape `OMS/ppl/m/n' in size <7.6> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 190.
-LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <10> not available
-(Font)              Font shape `T1/ppl/b/n' tried instead on input line 190.
-LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <11> not available
-(Font)              Font shape `T1/ppl/b/n' tried instead on input line 195.
-LaTeX Font Info:    Try loading font information for T1+phv on input line 195.
-("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\psnfss\t1phv.fd"
-File: t1phv.fd 2001/06/04 scalable font definitions for T1/phv.
-)
-LaTeX Font Info:    Font shape `T1/phv/bx/n' in size <11> not available
-(Font)              Font shape `T1/phv/b/n' tried instead on input line 195.
-LaTeX Font Info:    Font shape `T1/ppl/bx/n' in size <12> not available
-(Font)              Font shape `T1/ppl/b/n' tried instead on input line 250.
-[1
-
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}] [2] [3] [4]
-Overfull \hbox (4.01183pt too wide) in paragraph at lines 386--392
-\T1/ppl/m/n/12 par-tic-u-larly eco-nomic and gov-er-nance/social aid, but more 
-hu-man-i-tar-ian as-sis-tance. They
- []
-
-[5]
-LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 12.50409pt on input line 442.
-LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 9.37807pt on input line 442.
-LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 7.29405pt on input line 442.
-LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 12.50409pt on input line 442.
-LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 9.37807pt on input line 442.
-LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 7.29405pt on input line 442.
+(Font)              scaled to size 6.25204pt on input line 386.
 [6] [7] [8] [9]
-Overfull \hbox (35.53586pt too wide) in paragraph at lines 627--640
+Overfull \hbox (35.53586pt too wide) in paragraph at lines 572--585
  [][] 
  []
 
-[10] [11] [12]
+[10] [11]
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 8.33606pt on input line 759.
+(Font)              scaled to size 8.33606pt on input line 704.
 LaTeX Font Info:    Font shape `U/msa/m/n' will be
-(Font)              scaled to size 5.21004pt on input line 759.
+(Font)              scaled to size 5.21004pt on input line 704.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 8.33606pt on input line 759.
+(Font)              scaled to size 8.33606pt on input line 704.
 LaTeX Font Info:    Font shape `U/msb/m/n' will be
-(Font)              scaled to size 5.21004pt on input line 759.
-[13] [14] <figs/unnamed-chunk-4.pdf, id=56, 433.62pt x 325.215pt>
+(Font)              scaled to size 5.21004pt on input line 704.
+[12] [13] <figs/unnamed-chunk-4.pdf, id=51, 433.62pt x 325.215pt>
 File: figs/unnamed-chunk-4.pdf Graphic file (type pdf)
 <use figs/unnamed-chunk-4.pdf>
-Package pdftex.def Info: figs/unnamed-chunk-4.pdf used on input line 804.
+Package pdftex.def Info: figs/unnamed-chunk-4.pdf used on input line 749.
 (pdftex.def)             Requested size: 433.63878pt x 325.22908pt.
-<figs/unnamed-chunk-5.pdf, id=57, 433.62pt x 325.215pt>
+<figs/unnamed-chunk-5.pdf, id=52, 433.62pt x 325.215pt>
 File: figs/unnamed-chunk-5.pdf Graphic file (type pdf)
 <use figs/unnamed-chunk-5.pdf>
-Package pdftex.def Info: figs/unnamed-chunk-5.pdf used on input line 820.
+Package pdftex.def Info: figs/unnamed-chunk-5.pdf used on input line 765.
 (pdftex.def)             Requested size: 433.63878pt x 325.22908pt.
-[15 <./figs/unnamed-chunk-4.pdf>] [16 <./figs/unnamed-chunk-5.pdf>] <figs/unnam
-ed-chunk-6.pdf, id=80, 433.62pt x 325.215pt>
+<figs/unnamed-chunk-6.pdf, id=53, 433.62pt x 325.215pt>
 File: figs/unnamed-chunk-6.pdf Graphic file (type pdf)
 <use figs/unnamed-chunk-6.pdf>
-Package pdftex.def Info: figs/unnamed-chunk-6.pdf used on input line 840.
+Package pdftex.def Info: figs/unnamed-chunk-6.pdf used on input line 785.
 (pdftex.def)             Requested size: 433.63878pt x 325.22908pt.
-[17 <./figs/unnamed-chunk-6.pdf>]
+[14] [15 <./figs/unnamed-chunk-4.pdf>] [16 <./figs/unnamed-chunk-5.pdf>]
 
-LaTeX Warning: Float too large for page by 49.96207pt on input line 916.
+LaTeX Warning: Float too large for page by 49.96207pt on input line 858.
 
-<figs/unnamed-chunk-8.pdf, id=92, 578.16pt x 325.215pt>
+[17 <./figs/unnamed-chunk-6.pdf>] [18] <figs/unnamed-chunk-8.pdf, id=93, 578.16
+pt x 325.215pt>
 File: figs/unnamed-chunk-8.pdf Graphic file (type pdf)
 <use figs/unnamed-chunk-8.pdf>
-Package pdftex.def Info: figs/unnamed-chunk-8.pdf used on input line 940.
+Package pdftex.def Info: figs/unnamed-chunk-8.pdf used on input line 891.
 (pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
-[18] [19] <figs/unnamed-chunk-9.pdf, id=100, 578.16pt x 325.215pt>
+<figs/unnamed-chunk-9.pdf, id=94, 578.16pt x 325.215pt>
 File: figs/unnamed-chunk-9.pdf Graphic file (type pdf)
 <use figs/unnamed-chunk-9.pdf>
-Package pdftex.def Info: figs/unnamed-chunk-9.pdf used on input line 956.
+Package pdftex.def Info: figs/unnamed-chunk-9.pdf used on input line 907.
 (pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
-<figs/unnamed-chunk-10.pdf, id=101, 578.16pt x 325.215pt>
+[19] [20 <./figs/unnamed-chunk-8.pdf> <./figs/unnamed-chunk-9.pdf>] <figs/unnam
+ed-chunk-10.pdf, id=120, 578.16pt x 325.215pt>
 File: figs/unnamed-chunk-10.pdf Graphic file (type pdf)
 <use figs/unnamed-chunk-10.pdf>
-Package pdftex.def Info: figs/unnamed-chunk-10.pdf used on input line 972.
+Package pdftex.def Info: figs/unnamed-chunk-10.pdf used on input line 923.
 (pdftex.def)             Requested size: 469.75385pt x 264.23653pt.
-[20 <./figs/unnamed-chunk-8.pdf>] [21 <./figs/unnamed-chunk-9.pdf> <./figs/unna
-med-chunk-10.pdf>] [22] [23] [24
+[21 <./figs/unnamed-chunk-10.pdf>] [22] [23] [24
 
 ] [25] [26] [27] [28]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1271.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1271.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1226.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1226.
 (00_draft.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1271.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1271.
-
-LaTeX Font Warning: Size substitutions with differences
-(Font)              up to 0.7201pt have occurred.
-
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1226.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 1226.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1271.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1226.
  ) 
 Here is how much of TeX's memory you used:
- 12764 strings out of 493335
- 175294 string characters out of 3136680
- 275451 words of memory out of 3000000
- 16059 multiletter control sequences out of 15000+200000
- 60702 words of font info for 144 fonts, out of 3000000 for 9000
+ 12657 strings out of 493335
+ 173709 string characters out of 3136680
+ 273019 words of memory out of 3000000
+ 15963 multiletter control sequences out of 15000+200000
+ 43289 words of font info for 110 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 36i,13n,35p,274b,391s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 36i,13n,35p,328b,362s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files (x86)/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Progra
 m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Program 
 Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Fi
 les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files
  (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (
-x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86
-)/MiKTeX 2.9/fonts/type1/public/mathpazo/fplmri.pfb><C:/Program Files (x86)/MiK
-TeX 2.9/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/
-fonts/type1/urw/palatino/uplb8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/ty
-pe1/urw/palatino/uplr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/urw/
-palatino/uplri8a.pfb>
-Output written on 00_draft.pdf (28 pages, 1346114 bytes).
+x86)/MiKTeX 2.9/fonts/type1/public/mathpazo/fplmri.pfb><C:/Program Files (x86)/
+MiKTeX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Program Files (x86)/MiKTeX 2
+.9/fonts/type1/urw/palatino/uplr8a.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts
+/type1/urw/palatino/uplri8a.pfb>
+Output written on 00_draft.pdf (28 pages, 1329098 bytes).
 PDF statistics:
- 190 PDF objects out of 1000 (max. 8388607)
+ 182 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  31 words of extra memory for PDF output out of 10000 (max. 10000000)
 
