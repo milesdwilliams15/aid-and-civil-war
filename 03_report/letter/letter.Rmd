@@ -1,0 +1,28 @@
+---
+output: stevetemplates::memo
+fontfamily: mathpazo
+fontsize: 11pt
+geometry: margin=1in
+header-includes:
+   - \linespread{1.05}
+
+from: Miles D. Williams
+to: Editorial team at FPA
+subject: Research Note Submission
+date: "`r format(as.Date('2023-05-10'), '%d %B, %Y')`"
+memorandum: false
+#graphics: true
+#width: .3
+#logoposition: right
+#logo: taylor-swift-logo.png
+---
+
+I would like to submit an original manuscript, "When Do Civil Conflicts Attract More Foreign Aid? A Consideration of Dyadic Factors," for consideration as a research note at Foreign Policy Analysis. I can confirm that this work is original and is not currently being considered by another outlet.
+
+This note makes a novel empirical contribution to the literature on foreign aid and civil war that I believe will be of interest to readers of FPA. Over the past decade or so scholars have begun to examine why and when conflict attracts greater foreign aid from donor governments. Existing studies have considered differences across donors, recipient-level characteristics, and aid types. However, the role of dyadic characteristics or ties between specific donors and aid recipients have gone overlooked. This research note engages in an exploratory analysis of three dyadic factors---foreign policy alignment, commercial ties, and immigration---and their interaction effect with conflict in developing countries.
+
+These dyadic factors each capture a unique set of mechanisms that should compel donor governments to provide foreign aid to conflict-affected countries above and beyond what we would expect if we looked at conflict as a determinant of aid giving alone. A dyadic panel analysis of ODA commitments from 26 DAC countries to 131 developing countries from 1996 to 2014 shows that all three condition whether donors provide more aid to conflict-affected countries. 
+
+While this study is exploratory in nature, it is the hope of this author that its findings will motivate new research questions and theoretical arguments by other scholars that incorporate hitherto overlooked dyadic factors. Some discussion of theoretical explanations is provided that should point future scholars in the most fruitful directions. 
+
+Foreign aid's ability to either build or undermine peace remains a hotly contested issue. Honing our understanding of the foreign policy motivations that drive aid giving to conflict-affected countries is an essential piece of the puzzle, helping to contextualize foreign aid's effects.

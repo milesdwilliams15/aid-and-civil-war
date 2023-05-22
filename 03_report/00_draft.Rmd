@@ -5,11 +5,11 @@ output:
 bibliography: ref.bib
 biblio-style: apsr
 title: "When Do Civil Conflicts Attract More Foreign Aid? A Consideration of Dyadic Factors"
-thanks: "Replication files are available on the author's Github account (http://github.com/milesdwilliams15). **Current version**: `r format(Sys.time(), '%B %d, %Y')`; **Word count**: `r scales::comma(wordcountaddin::word_count(here::here('03_report', '00_draft.Rmd')))`; **Corresponding author**: williamsmd@denison.edu."
+thanks: "Replication files are available on the author's Github account (http://github.com/milesdwilliams15). **Current version**: `r format(Sys.time(), '%B %d, %Y')`; **Corresponding author**: williamsmd@denison.edu."
 author:
 - name: Miles D. Williams
   affiliation: Denison University
-abstract: "When do conflict-affected countries draw more foreign aid from donors? Studies over the past decade have started to answer this question by looking at donor and recipient characteristics, and by looking at different aid types. Dyadic factors continue to go overlooked, and examining these factors provides untapped opportunities to test a range of interesting interactive hypotheses beyond donor or recipient factors alone. This study probes three such factors: (1) foreign policy alignment, (2) commercial ties, and (3) immigration. The results provide evidence that all three condition whether conflict attracts more aid from donors. Future studies should examine these and possibly other factors in greater detail. By better understanding *why* conflict does or does not attract more aid, its peace-building and peace-undermining effects can be better contexualized. It is hoped that the regularities identified in this note will spur further interest in this line of inquiry."
+abstract: "When do conflicts attract more foreign aid from donors? Studies over the past decade have started to answer this question by looking at donor and recipient characteristics, but dyadic factors continue to go overlooked. Examining these factors provides untapped opportunities to test a range of interesting interactive hypotheses beyond donor or recipient factors alone. This study probes three such factors: (1) foreign policy alignment, (2) commercial ties, and (3) immigration. Each corresponds with distinct mechanisms that are hypothesized to shape when conflict does and does not attract greater foreign aid from donor governments. The results provide evidence that all three condition the effect of conflict on aid dyadic aid receipts. Ultimately, by better understanding *when* conflict does or does not attract more aid, its peace-building and peace-undermining effects can be better contexualized."
 keywords: "foreign aid, civil war, development"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 geometry: margin=1in
@@ -41,6 +41,8 @@ Data <- read_csv(
 )
 Data <- Data %>% filter(donor_active == 1,
                         year %in% 1995:2019)
+Data$maxintensity <- replace_na(Data$maxintensity, 0) %>%
+  as.factor()
 # Data <- Data %>%
 #   mutate(
 #     exports = 100000000 * exports / exp(wbgdp2011est1),
@@ -83,63 +85,133 @@ fit4 <- lm_robust(
   clusters = paste0(donor, recipient),
   data = Data
 )
-# fit5 <- lm_robust(
-#   base_form,
-#   fixed_effects = ~ paste0(donor, recipient) + year,
-#   se_type = "stata",
-#   clusters = paste0(donor, recipient),
-#   data = Data
-# )
-# fit6 <- lm_robust(
-#   update(base_form, ~ . + ucdpongoing:kappavv),
-#   fixed_effects = ~ paste0(donor, recipient) + year,
-#   se_type = "stata",
-#   clusters = paste0(donor, recipient),
-#   data = Data
-# )
-# fit7 <- lm_robust(
-#   update(base_form, ~ . + ucdpongoing:asinh(exports)),
-#   fixed_effects = ~ paste0(donor, recipient) + year,
-#   se_type = "stata",
-#   clusters = paste0(donor, recipient),
-#   data = Data
-# )
-# fit8 <- lm_robust(
-#   update(base_form, ~ . + ucdpongoing:asinh(migrants)),
-#   fixed_effects = ~ paste0(donor, recipient) + year,
-#   se_type = "stata",
-#   clusters = paste0(donor, recipient),
-#   data = Data
-# )
+rob_check1 <- update(base_form, ~ . - ucdpongoing + maxintensity)
+fit5 <- lm_robust(
+  rob_check1,
+  fixed_effects = ~ donor + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit6 <- lm_robust(
+  update(rob_check1, ~ . + maxintensity:kappavv),
+  fixed_effects = ~ donor + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit7 <- lm_robust(
+  update(rob_check1, ~ . + maxintensity:asinh(exports)),
+  fixed_effects = ~ donor + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+fit8 <- lm_robust(
+  update(rob_check1, ~ . + maxintensity:asinh(migrants)),
+  fixed_effects = ~ donor + year,
+  se_type = "stata",
+  clusters = paste0(donor, recipient),
+  data = Data
+)
+
 ```
 
 # Introduction and Motivation
 
-When do civil conflicts attract more foreign aid? Studies over the last decade or so have started to address this question, finding that donor governments respond to conflicts in developing countries in diverse ways. @ballaReinhardt2008 find that the United States provides more aid not only to countries experiencing civil war, but also if neighboring countries experience conflict as well. Conversely, they find that many other donors give less aid when conflict arises. @everett2016, developing a novel measure of conflict, shows that US disaster assistance is responsive to ongoing political violence. Recently, @everettTirone2021 find that donor reactions vary across aid types, with conflict attracting on net less total foreign aid from donors but more humanitarian assistance. They also find that countries neighboring conflict-affect states receive more aid of all types in proportion to the number of refugees they host.
+When do civil conflicts attract more foreign aid from donor governments? Studies over the last decade have started to address this question, finding that donor governments respond to conflicts in developing countries in diverse ways. @ballaReinhardt2008 find that the United States and other donors provide more aid not only to countries experiencing civil war, but also if neighboring countries experience conflict as well. Conversely, they find that other donors give less aid when conflict arises. @everett2016, developing a novel measure of conflict, shows that US disaster assistance is responsive to ongoing political violence. Recently, @everettTirone2021 find that donor reactions vary across aid types, with conflict attracting on net less total foreign aid from donors but more humanitarian assistance. They also find that countries neighboring conflict-affect states receive more aid of all types in proportion to the number of refugees they host.
 
-Research in this area should continue and already has uncovered a great deal about what motivations drive donor giving to conflict-affected countries. However, existing work has focused on recipient-level or donor-specific characteristics while ignoring *dyadic* factors that may influence donor responses to conflict. Examining such factors permits testing a range of new, conditional hypotheses that existing work has failed to consider. 
+These findings are important; however, they deal exclusively with recipient- or donor-level characteristics while ignoring *dyadic* factors that may influence donor responses to conflict. Examining such factors permits testing a range of new, conditional hypotheses that existing work has failed to consider. 
 
-As a first pass, this study explores the interaction between conflict and three factors related to the interests of donor governments: (1) foreign policy alignment, (2) commercial ties, and (3) immigration. Each one captures a unique set of mechanisms that should compel donor governments to provide foreign aid to conflict-affected countries above and beyond what we would expect if we looked at conflict as a determinant of aid giving alone. A dyadic panel analysis of ODA commitments from 26 DAC countries to 131 developing countries from 1996 to 2014 yields a few interesting conclusions. While this study is exploratory in nature, it is the hope of this author that its findings will motivate new research questions and theoretical arguments by other scholars.
+This study explores the interaction between conflict and three dyadic factors related to the interests of donor governments: (1) foreign policy alignment, (2) commercial ties, and (3) migration. Each one captures a unique set of mechanisms that should compel donor governments to provide foreign aid to conflict-affected countries above and beyond what we would expect if we looked at conflict as a determinant of aid giving alone. 
 
-First, when the size of the migrant population in a donor is relatively small, the marginal effect of conflict is *negative* and statistically significant. But when the size of the migrant population is large, the marginal effect of conflict is *positive* and statistically significant. This finding is relevant in light of research showing links between donor immigration policy and immigrant lobbies and foreign aid [@bermeoLeblang2015], raising new questions about the possible roles these factors play in conditioning how donors react to conflict in developing countries.
+First, with respect to foreign policy alignment, recent research by @chengMinhas2021 shows that donor governments leverage disasters in strategic opponents as opportunities to smooth relations. They find that donor governments give disproportionately more aid to political adversaries in the event of natural disasters. Civil wars are different in kind from natural disasters but have many of the same implications for economic and political stability. To the extent that donor governments are opportunistic in their responses to conflict in developing countries, civil wars should attract greater aid from donors in proportion to their foreign policy misalignment with the recipient government.
 
-Second, with respect to dyadic foreign policy alignment, when alignment is low, the marginal effect of conflict is *positive* and statistically significant. When alignment is high, the marginal effect of conflict is *negative* and the estimate falls short of statistical significance. This pattern runs parallel with recent research by @chengMinhas2021 showing that donors leverage natural disasters in developing countries to wield influence over strategic opponents. The analysis here suggests this logic may extend to conflict as well.
+Second, commercial ties have long been linked to donor foreign aid allocations, but their role in shaping donor reactions to conflict remains uncertain. However, past research shows that industrialized countries use instruments other than foreign aid to assist important trade partners when conflict breaks out [@stojekTir2015; @stojekChacha2015]. By extension, donor governments may use aid to soften the blow and preserve consumption of their exports in the face of recipient conflict. If this is the case, conflict should attract more aid from a donor government if the recipient is an important trade partner.
 
-Finally, with respect to trade, when total bilateral exports are low, conflict has a positive but statistically insignificant marginal effect on ODA. But, when total bilateral exports are high, the marginal effect of conflict remains positive and becomes statistically significant and substantively bigger. This finding aligns with research like that of @stojekTir2015 showing that UN peacekeeping operations are disproportionately concentrated in conflict-affected countries that have strong trade ties to permanent members of the UN Security Council. @stojekChacha2015 find, also, that dyadic military intervention is similarly conditioned on economic ties. This analysis suggests that donor governments' commercial interests color their aid giving to conflict-affected countries as well.
+Finally, @bermeoLeblang2015 find that foreign aid donors use aid as a tool to limit immigration from aid recipients while simultaneously being responsive to migrant mobilization. These mechanisms may extend to how donor governments react to conflict in developing countries with donors seeking to limit additional inflows of migrants from conflict-affected countries and to appease immigrant lobbies. If this is the case, conflict in countries from which donors host a sizable diaspora should attract greater bilateral aid from a donor.
 
-Civil war poses a grave challenge to promoting economic development in many of the least developed parts of the world [@collierEtAl2002]. As scholars like @addisonMcGillivray2004 noted two decades ago, "[a]id plays a highly controversial role in conflict-affected countries" (347). This remains true today with many donor governments believing their aid can be a tool for peace while existing research yields mixed findings about aid's peace-promoting effects [@findley2018]. Having a more refined grasp of the dyadic factors that loosen donors' purse strings in response to conflict is a small but necessary piece of the overall puzzle. While this study has identified novel empirical regularities, future scholarship is needed to more deeply theorize about these and also assess whether the dyadic factors analyzed here influence aid's peace-building properties.
+The above hypotheses are tested via a dyadic panel analysis of ODA commitments from 26 DAC countries to 131 developing countries from 1996 to 2014. The results show that all three factors condition how donors respond to conflicts in developing countries in the expected direction.
+
+Civil wars pose a grave challenge to promoting economic development in many of the least developed parts of the world [@collierEtAl2002]. As scholars like @addisonMcGillivray2004 noted two decades ago, "[a]id plays a highly controversial role in conflict-affected countries" (347). This remains true today with many donor governments believing their aid can be a tool for peace while existing research yields mixed findings about aid's peace-promoting effects [@findley2018]. Having a more refined grasp of the dyadic factors that loosen donors' purse strings in response to conflict is a small but necessary piece of the overall puzzle.
+
+# Aid and Conflict
+
+A large literature centers on the effects of foreign aid on peace in developing countries, a fact owed to a growing number of partnerships between academics and government practitioners. While research to date yields mixed results, several studies point to aid's ability to foster stability in developing countries under the right set of conditions. @collierEtAl2002 for example find that aid leads to reduced risk of future conflict. @savun2012 further shows aid reduces conflict risk specifically by muting the impact of negative economic shocks. Conversely, an unstable supply of aid can risk triggering conflict, with a sudden and sizable cut in aid receipts acting like its own kind of negative economic shortfall [@nielsenEtAl2011].
+
+Aid's ability to spur a quick return to peace once the fighting has started is less clear. @nunnQian2014 show that food aid worsens violence due to rebel looting of food supplies, and @narangStanton2017 find that insurgents in Afghanistan intentionally target aid workers. Further, @crostEtAl2014 show that insurgents target violent acts at locations in a recipient country that benefit from particular aid projects as a way to sabotage progress and bolster their support among local populations.
+
+Effective or not, many donor governments believe in the peace-promoting power of their aid [@findley2018]. Given the mixed track-record of aid in practice, understanding why donors choose to give, or not to give aid to conflict-affected countries is all the more important. Studies so far show that donors respond to conflicts in diverse ways.
+
+@ballaReinhardt2008 identify a complex array of responses, but show nonetheless that all donor governments condition aid on conflict, whether in the decision to give any aid or the total amount, or to increase or reduce aid as a result of conflict. Some of their findings include that the United States and several other donors provide more aid not only to countries experiencing civil war, but also to developing countries adjacent to conflict. Conversely, many other donors give less aid when conflict arises. @ballaReinhardt2008 remain unsure of the right interpretation of these patterns, asking whether the donors giving more aid in the face of conflict seek to stabilize countries in the hopes of cultivating future cooperation partners or else to safeguard human rights and services.
+
+@everettTirone2021 put forward a more sophisticated theory of donor giving in response conflict called "strategic Samaritanism." This theory emphasizes the idea that donor aid giving is best represented as a portfolio of aid types. Each type yields different returns in the context of violence versus peace. While economic and governance/social aid require more government-to-government interaction, humanitarian assistance usually requires less. During conflict, this gives an edge to humanitarian aid as the recipient government's bureaucracy will be impaired as a result of the fighting. As a result, developing countries experiencing conflict should see a reduction to economic and governance/social aid, but an increase to humanitarian aid. Meanwhile, countries adjacent to the conflict, but nonetheless affected by its spillovers, should receive more of all types of aid. 
+
+Supporting their argument, @everettTirone2021 find that donor reactions vary across these aid types, with conflict attracting on net less total foreign aid from donors, particularly economic and governance/social aid, but more humanitarian assistance. They also find that countries neighboring conflict-affect states receive more aid of all types in proportion to the number of refugees they host.
+
+These studies, among others, identify nuanced patterns in the aid allocation decisions of donor governments with respect to recipient conflict. They do so by emphasizing factors at the donor or recipient level of analysis. These factors are important, but there is a third class of factors that has yet to be considered. These are factors at the *dyadic* level of analysis that capture features of the unique bilateral relationships between individual donors and recipients. How do the ties between industrialized countries and developing countries condition aid allocation decisions with respect to civil conflict? The next section highlights three dyadic factors and their hypothesized links to aid allocation and conflict.
+
+# A Role for Dyadic Factors
+
+Three dyadic factors linking donor responses to civil conflict are considered in this study. These each capture distinct mechanisms that shape how different donors will respond to the same conflict in a developing country. The first of these mechanisms is *opportunity*, or the idea that civil conflict in a strategic adversary creates space for a donor government to provide aid to gain leverage. The second is *commercial ties*, which give donors material incentives to intervene in a conflict. The third is *migration*, which adds dual pressures to donor governments to respond to conflicts in such a way that limits inflows of new migrants and appeases immigrant lobbies. The sections below elaborate on these mechanisms in more detail.
+
+## Opportunity
+
+The foreign policy motivations behind foreign aid giving are well documented in the aid literature [@alesinaDollar2000; @bermeo2017; @berthelemy2006; @bdms2009; @maizelsNissanke1984; @mckinlayLittle1977; @schraederEtAl1998]. It seems plausible that such considerations may shape how donors react to conflict. On the one hand, donors may be motivated to come to the aid of more politically aligned countries. On the other hand, donors may seize conflict in a strategic opponent as an opportunity to gain influence, as @chengMinhas2021 find is the case with natural disasters.
+
+The idea, as put forth by @chengMinhas2021, is that a disaster creates space for a donor country to gain influence with a political adversary. A softer way of putting it is that a disaster offers donors an opportunity to improve relationships with opponents. Evidence for such motives appear in the documented skepticism of leaders in accepting humanitarian relief from adversaries after disasters. Consider Hugo Chavez's reluctance---rooted in an aversion to US hegemony---in accepting US assistance in 1999 after catastrophic floods in Vargas State in Venezuela.\footnote{Brand, Richard. "Chavez assailed on handling of Venezuelan flood disaster." \textit{The Miami Herald}. 5 August 2001. Accessed May 2023: \url{http://www.latinamericanstudies.org/venezuela/venezuela-disaster.htm}.} Far from unfounded, this skepticism in accepting aid from an adversary may be merited. There are numerous documented improvements to public perceptions of donors among the citizens of strategic opponents after the provision of aid, as was the case of North Korean attitudes toward South Koreans and the US in the wake of a famine for which both the US and South Korea provided assistance [@natsios1999].
+
+Whether this strategy works at all times and places is not the question at hand. The possibility of success may be motivation enough to seize the opportunity of a disaster to smooth relations with an adversary. Using a dyadic measure of strategic alignment, @chengMinhas2021 find that donors do, in fact, engage in this kind of opportunistic behavior to win over an opponent.
+
+While a civil war is categorically different from a natural disaster, it has many of the same deleterious effects for the conflict-affected country. It is possible, then, that the same logic that dictates donor responses to natural disasters would extend to civil wars. If it does, this implies the following hypothesis:
+
+\bigskip
+
+> **H1**: *Civil war will attract more aid from donors when the recipient is a political adversary of the donor.*
+
+\bigskip
+
+## Commerical Interests
+
+The idea of "aid following trade" is not new in the aid literature [@lundsgaardeEtAl2010]. The conventional logic holds that donors use aid as a way to reinforce and strengthen commercial ties with aid recipients. Studies have shown that civil war poses a threat to these ties by reducing overall bilateral trade with a conflict-affected country [@bayerRupert2004]. Donors, therefore, may be motivated to provide aid in response to conflict in proportion to the strength of their commercial ties. Whether aid really limits the reduction in trade is a separate question, but the idea that donor countries might try to use aid as a way to soften the blow is not unreasonable.
+
+Studies already show that industrialized countries respond to conflicts on the basis of trade using foreign policy instruments other than foreign aid. @stojekTir2015 find that UN peace-keeping missions disproportionately go to countries that consume more exports from the five permanent members of the UN Security Council. @stojekChacha2015 further find that the likelihood of dyadic military interventions is proportional to bilateral trade between the intervening country and the subject of intervention. It stands to reason that donors would use all the tools at their disposal, including foreign aid, to protect their commercial interests. This implies the following second hypothesis:
+
+\bigskip
+
+> **H2**: *Civil war will attract more aid from donors when the recipient is a major consumer of donor exports.*
+
+\bigskip
+
+## Immigration and Migrant Lobbies
+
+Past research shows that donor aid giving is linked with their immigration policies and to immigrant mobilization [@bermeoLeblang2015]. Not only does this research suggest that donors seek to use aid as a tool to limit demand for immigration, but that they also face pressure from large migrant diasporas to support their homelands. These factors may also determine donor responses to civil war. 
+
+As already noted, studies show that donor countries give more aid to the neighbors of conflict-affected countries in proportion to the number of refugees those countries host [@everettTirone2021]. This finding demonstrates that donors are sensitive to the outflows of migrants from conflict-affected countries. 
+
+However, donor countries may be differently sensitive to conflicts due to possible direct *dyadic* inflows of migrants from conflict-affected areas as well. Migrant ties reduce transaction costs for future immigrants, meaning that countries hosting a large migrant diaspora are disproportionate destinations for future migrants [@fitzgeraldEtAl2014]. That means hosting a large migrant population from a conflict-affected country can serve as a signal of increased migration threat due to conflict, raising the stakes for donor governments.
+
+These migrant diasporas, in turn, can actively lobby their host government to provide aid to their countries of origin [@bermeoLeblang2015; @heinrich2019]. In fact, many developing countries grant their diasporas dual citizenship rights as a way to help foster stronger ties to home and to mobilize migrants living abroad to lobby on behalf of their homeland [@anguniasNewland2007; @gamlen2008; @goldring1998; @itzigsohn2000; @jonesCorrea2001; @mazzolari2009; @shain1999]. Donors that host larger migrant populations from conflict-affected countries therefore may face greater domestic pressure to provide foreign aid.
+
+Together, these two mechanisms suggest that donors will be especially responsive to conflicts when donors host a large migrant population from the conflict-affected country, both as a strategy to limit immigration due to conflict and because of domestic pressure from migrant lobbies. This implies the following hypothesis:
+
+\bigskip
+
+> **H3**: *Civil war will attract more aid from donors when the recipient is a major source of migrants to donors.*
+
+\bigskip
 
 # Data and Design
 
-An original dyadic panel dataset was compiled for this analysis. Data on the aid giving of donor governments to developing countries was collected from the OECD. Aid is measured as official development assistance or ODA commitments to countries and regions in millions of 2021 US dollars. To normalize values while retaining zeros the inverse hyperbolic sine (asinh) was applied. 
+An original dyadic panel dataset was compiled for the analysis. Data on the aid giving of donor governments to developing countries was collected from the OECD. Aid is measured as official development assistance or ODA commitments to countries and regions in millions of 2021 US dollars. To normalize values while retaining zeros the inverse hyperbolic sine (asinh) was applied. 
 
 The measure of ongoing conflict in a developing country in a given year comes from the UCDP Armed Conflict database [@gleditschEtAl2002; @petterssonEtAl2019]. It is binary and coded as "1" if there is an ongoing armed intrastate dispute involving the recipient government and at least one non-state actor that results in more than 25 annual battle deaths. The UCDP measure is not the only measure of conflict, but it is well-established and one of the most commonly applied.
 
-Three dyadic factors are considered for their possible interactions with recipient conflict. Together, these factors cover a broad range of possible mechanisms driving donor reactions to civil war. The first is a measure of dyadic foreign policy alignment. This is calculated using latent ideal points estimated using UN voting data where higher values denote closer alignment while lower values denote more opposition [@haege2011; @baileyEtAl2017]. The foreign policy motivations behind foreign aid giving are well documented in the aid literature. It seems plausible that such considerations may shape how donors react to conflict. On the one hand, donors may be motivated to come to the aid of more politically aligned countries. At the same time, donors may seize conflict in a strategic opponent as an opportunity to gain influence, as @chengMinhas2021 find is the case with natural disasters.
+Three dyadic variables are used to test the three hypotheses proposed in the previous section. The first is a measure of dyadic foreign policy alignment. This is calculated using latent ideal points estimated with UN voting data where higher values denote closer alignment while lower values denote more opposition [@haege2011; @baileyEtAl2017]. Unlike UN voting measures that have been historically used in the IR literature, the latent ideal point measure used here is specially tuned to capture alignment with the US-led liberal international order. This state-of-the-art measure is argued to have the advantage of supporting intertemporal comparisons and an ability to isolate actual shifts in preferences versus simple changes in the UN General Assembly's agenda [see @baileyEtAl2017 for more details.]
 
-Exports are the second dyadic factor considered. Data on total dyadic export flows come from the Correlates of War trade dataset and are measured in millions of current asinh-transformed US dollars [@barbieriEtAl2009]. The idea of "aid following trade" is not new in the aid literature [@lundsgaardeEtAl2010]. The conventional logic holds that donors use aid as a way to reinforce and strengthen commercial ties with aid recipients. Studies have shown that civil war poses a threat to these ties by reducing overall bilateral trade with a conflict-affected country [@bayerRupert2004]. Donors, therefore, may be motivated to provide aid in response to conflict in proportion to the strength of their commercial ties.
+Exports are the second dyadic factor considered. Data on total dyadic export flows come from the Correlates of War trade dataset and are measured in millions of current asinh-transformed US dollars [@barbieriEtAl2009]. 
 
-The final dyadic factor considered is migration, measured as the asinh-transformed values of the total migrant stock living in a donor by national origin. This comes from the OECD's International Migration Database.\footnote{This can be found at OECD.stat.} Past research shows that donor aid giving is linked with their immigration policies and to migrant mobilization [@bermeoLeblang2015]. Not only do donors seek to use aid as a tool to limit demand for immigration, but they also face pressure from large migrant diasporas to support their homelands. These factors may also determine donor responses to civil war. Studies have already found that donor countries give more aid to the neighbors of conflict-affected countries in proportion to the number of refugees those countries host [@everettTirone2021]. But donor countries may be differently sensitive to conflicts due to possible *direct* inflows of migrants from conflict-affected areas as well. Studies show that migrant ties reduce transaction costs for future immigrants and thus countries that host a large migrant diaspora are also disproportionate destinations for future migrants [@fitzgeraldEtAl2014]. These migrant diasporas, in turn, can actively lobby their host government to provide aid to their countries of origin. These two mechanisms suggest that donors may be especially responsive to conflicts when they host a large migrant population from the conflict-affected country, both as a strategy to limit immigration due to conflict and because of domestic pressure from migrant lobbies.
+The final dyadic factor considered is migration, measured as the asinh-transformed values of the total migrant stock or population living in a donor country by national origin. This comes from the OECD's International Migration Database.\footnote{This can be found at OECD.stat.} 
 
 To test how the above factors condition donor responses to civil war, I estimate empirical models of the following form:
 
@@ -199,12 +271,55 @@ tibble(
   )
 ```
 
+```{r}
+library(psych)
+describeBy(mf, fast = T) %>%
+  .[1:12, c(3:5, 10)] -> smry
+rownames(smry) <- c(
+  "ODA in millions (asinh)",
+  "UCDP/PRIO",
+  "Alignment",
+  "Exports in millions (asinh)",
+  "Migrant Stock (asinh)",
+  "Defense (ATOP)",
+  "Distance in km (log)",
+  "Colony",
+  "Population (log)",
+  "Income (log)",
+  "Democracy",
+  "Disaster (asinh)"
+)
+kable(
+  smry,
+  caption = "Summary Statistics",
+  booktabs = T,
+  linesep = "",
+  digits = 3
+) %>%
+  add_footnote(
+    label = paste0(
+      "N = ",
+      scales::comma(nrow(mf))
+    )
+  )
+# mf %>%
+#   group_by(ucdpongoing) %>%
+#   summarize(
+#     aid = sum(sinh(`asinh(oda_millions)`))
+#   ) %>%
+#   ungroup %>%
+#   mutate(
+#     pct = aid / sum(aid)
+#   )
+```
+
+Table 2 shows summary statistics for the data sample. With listwise deletion of rows with missing values the sample consists of 28,717 dyad-year observations. These are comprised of 26 DAC donors and 131 aid recipients spanning the years 1996 to 2014. The conflict rate according to the UCDP measure per dyad-year is approximately 18.4%. Even so, a comparison of the cumulative ODA commitments between conflict-affected recipients and recipients at peace reveals that the former receive nearly 43.3% of the total ODA committed during this period. While conflict-affected countries comprise a minority of developing countries, they receive an outsized share of ODA. This stylized fact reveals just how important conflict-affected countries are in the portfolio of aid recipients for industrialized countries.
 
 # Analysis
 
-Table 2 summarizes model estimates. All models were estimated via OLS, and inference was done using CR1 standard errors clustered by dyad. Model 1 was estimated without an interaction term between conflict and any of the dyadic factors of interest. The estimate for conflict (UCDP) is positive and statistically significant. Because the outcome has been asinh-transformed, it has a quasi-elastic interpretation. Using the appropriate transformation, the estimate for conflict in Model 1 suggests that, holding all else equal, a donor gives 20% more aid to a conflict-affected country than to a country at peace. 
+Table 3 summarizes model estimates. All models were estimated via OLS, and inference was done using CR1 standard errors clustered by dyad. Model 1 was estimated without an interaction term between conflict and any of the dyadic factors of interest. The estimate for conflict (UCDP) is positive and statistically significant. Because the outcome has been asinh-transformed, it has a quasi-elastic interpretation. Using the appropriate transformation, the estimate for conflict in Model 1 suggests that, holding all else equal, a donor gives 20% more aid to a conflict-affected country than to a country at peace. This aligns with the stylized fact noted in the previous discussion, which revealed that conflict-affected countries receive disproportionately more ODA commitments than countries at peace.
 
-The estimates in Model 1 for the dyadic factors of interest are also interesting. All are statistically significant, but while the coefficients for both exports and migrants have a positive sign, the sign for alignment is negative. This conflicts with other studies that have suggested that donors provide *more* aid to politically aligned developing countries [@alesinaDollar2000]. 
+The estimates in Model 1 for the dyadic factors of interest are also interesting. All are statistically significant, but while the coefficients for both exports and migrants have a positive sign, the sign for alignment is negative. This conflicts with other studies that have suggested that donors provide *more* aid to politically aligned developing countries [@alesinaDollar2000], but it is consistent with the idea that donors seek to win over political adversaries using foreign aid.
 
 Model 2 adds an interaction term for foreign policy alignment and conflict. The estimate is negative though not estimated with enough precision to reject the null at the 0.05 level. Model 3 includes an interaction term for dyadic donor exports to recipients and conflict. The estimate is positive but estimated with even less precision. The interaction between migration and conflict in Model 4 stands out. It is both statistically significant and positive.
 
@@ -253,12 +368,11 @@ texreg(
 )
 ```
 
+It is wise to avoid making too much of the insignificant interaction terms in Models 2 and 3 before first looking at the conditional marginal effects of conflict given the dyadic factors in question. @kingsleyEtAl2017 point out that it is easy to over- or understate the practical significance of interaction terms if scholars ignore two fundamental questions. These deal respectively with whether (1) the magnitude of the marginal effect of the variable of interest differs given the conditioning variable or (2) the marginal effect of the variable of interest differs from zero given the conditioning variable. 
 
-It is wise to avoid making too much of the insignificant interaction terms in Models 2 and 3 before first looking at the conditional marginal effects of conflict given the dyadic factors in question. @kingsleyEtAl2017 point out that it is easy to over- or understate the practical significance of interaction terms if scholars ignore two fundamental questions. These deal respectively with whether (1) the magnitude of the marginal effect of the variable of interest differs given the conditioning variable or (2) the marginal effect of the variable of interest differs from zero given the conditioning variable. As @kingsleyEtAl2017 warn, it is premature to discard a conditional hypothesis on the basis of a insignificant interaction term because the interaction in question may yet condition whether the marginal effect of the variable of interest is different from zero.
+As @kingsleyEtAl2017 warn, it is premature to discard a conditional hypothesis on the basis of a insignificant interaction term because the interaction in question may yet condition whether the marginal effect of the variable of interest is different from zero. Simply observing that the interaction between conflict and alignment and exports is insignificant answers only question 1. It cannot provide an answer to question 2, which is just as important for testing the mechanisms associated with these dyadic factors. It therefore is important to check how the marginal effect of conflict varies given the dyadic factors of interest. This is done in Figures 1, 2, and 3.
 
-Simply observing that the interaction between conflict and alignment and exports is insignificant answers only question 1. It cannot provide an answer to question 2, which is just as important for testing the mechanisms associated with these dyadic factors. It therefore is important to check how the marginal effect of conflict varies given the dyadic factors of interest. This is done in Figures 1, 2, and 3.
-
-Figure 1 shows how the marginal effect of conflict on ODA commitments (y-axis) varies given foreign policy alignment (x-axis) between a donor and recipient country. The marginal effects have been converted to elasticities or the percent change in ODA given conflict, and 95% confidence intervals are included. The figure shows clearly that foreign policy alignment conditions whether ongoing conflict attracts more foreign aid from donors. While closely aligned countries experiencing conflict do not receive additional aid from donors, strategic opponents do. This aligns with @chengMinhas2021 who find that strategic opponents experiencing natural disasters get more aid from donors rather than politically aligned recipients. It seems that donor governments like to "keep friends close, but enemies closer" when it comes to conflict-affected developing countries as well.  
+Figure 1 shows how the marginal effect of conflict on ODA commitments (y-axis) varies given foreign policy alignment (x-axis) between a donor and recipient country. The marginal effects have been converted to elasticities or the percent change in ODA given conflict, and 95% confidence intervals are included. The figure shows clearly that foreign policy alignment conditions whether ongoing conflict attracts more foreign aid from donors. While closely aligned countries experiencing conflict do not receive additional aid from donors, strategic opponents do. This aligns with H1 and with @chengMinhas2021 who find that strategic opponents experiencing natural disasters get more aid from donors rather than politically aligned recipients. It seems that donor governments like to "keep friends close, but enemies closer" when it comes to conflict-affected developing countries as well.  
 
 ```{r fig.height=4.5, fig.width=6, fig.cap="Marginal effect of UCDP conflict measure given level of foreign policy alignment."}
 f <- function(x) (exp(x) - 1)
@@ -318,7 +432,7 @@ meplot(fit2, var2 = "kappavv",
   )
 ```
 
-Figure 2 shows how the marginal effect of conflict (y-axis) varies given dyadic donor exports to recipients (x-axis). Like the previous figure, estimates have been converted to percent changes in ODA given conflict, and 95% confidence intervals are included. The results support the claim that donor government responses to conflict are partly predicated on protecting their commercial interests. Only when recipients consume a sufficiently high amount of donor exports does ongoing conflict attract more ODA.
+Figure 2 shows how the marginal effect of conflict (y-axis) varies given dyadic donor exports to recipients (x-axis). Like the previous figure, estimates have been converted to percent changes in ODA given conflict, and 95% confidence intervals are included. The results support H2, that donor government responses to conflict are partly predicated on protecting their commercial interests. Only when recipients consume a sufficiently high amount of donor exports does ongoing conflict attract more ODA.
 
 ```{r fig.height=4.5, fig.width=6, fig.cap="Marginal effect of UCDP conflict measure given donor exports to aid recipients."}
 meplot(fit3, var2 = "asinh(exports)", 
@@ -339,7 +453,7 @@ meplot(fit3, var2 = "asinh(exports)",
   )
 ```
 
-Finally, Figure 3 shows how the marginal effect of conflict (y-axis) varies given migration stock by national origin (x-axis). The results show not only that when donor countries host a larger number of migrants from conflict-affected countries they provide more aid, but also that when the migrant population is of negligible size conflict repels rather than attracts aid. The latter finding requires more careful theorization and empirical interrogation, but the first aligns well with research highlighting the dual roles of anti-immigrant donor policies and migrant mobilization in shaping donor government aid allocations [@bermeoLeblang2015]. Beyond the mere observation that migration shapes foreign aid policy, these findings suggest specifically that dyadic migration influences how donor governments respond to conflict-affected countries.
+Finally, Figure 3 shows how the marginal effect of conflict (y-axis) varies given migration stock by national origin (x-axis). The results show not only that when donor countries host a larger number of migrants from conflict-affected countries they provide more aid, but also that when the migrant population is of negligible size conflict repels rather than attracts aid. The latter finding requires more careful theorization and empirical interrogation, but the first aligns with H3 and with the research cited in the previous discussion of the dual roles of anti-immigrant donor policies and migrant mobilization in shaping donor government aid allocations [@bermeoLeblang2015]. These results support the idea that these mechanisms also color donor reactions to conflict in developing countries.
 
 ```{r fig.height=4.5, fig.width=6, fig.cap="Marginal effect of UCDP conflict measure given migrant population by origin."}
 meplot(fit4, var2 = "asinh(migrants)", 
@@ -360,49 +474,221 @@ meplot(fit4, var2 = "asinh(migrants)",
   )
 ```
 
+# Discussion and Robustness Checks
+
+Taken together, these findings support hypotheses 1, 2, and 3. These respectively hold that donor governments consider whether to respond to conflict in developing countries by giving more foreign aid in light of foreign policy *opportunity*, *commercial ties*, and *migration*. Not all conflicts are created equal, however. While some have more localized effects, others have far reaching, destabilizing implications. We should expect donor responses given the dyadic factors highlighted here to therefore be especially pronounced in more severe conflicts.
+
 ```{r results='asis'}
-# texreg(
-#   m2,
-#   include.ci = F,
-#   caption = "OLS Estimates",
-#   caption.above = T,
-#   custom.header = list("Total ODA Commitments" = 1:4),
-#   custom.coef.map = coef_map[-c(6:7)],
-#   custom.gof.rows = list(
-#     "Donor FE" = rep("No", len = 4),
-#     "Dyadic FE" = rep("Yes", len = 4),
-#     "Year FE" = rep("Yes", len = 4)
-#   ),
-#   digits = 3,
-#   stars = c(0.001, 0.01, 0.05, 0.1)
-# )
+coef_map <- list(
+  "UCDP (25-999 deaths)",
+  "UCDP (1,000+ deaths)",
+  "Alignment",
+  "Exports",
+  "Migrants",
+  "Defense",
+  "Distance",
+  "Colony",
+  "Population",
+  "Income",
+  "Democracy",
+  "Disaster",
+  "UCDP (25-999 deaths) $\\times$ Alignment",
+  "UCDP (1,000+ deaths) $\\times$ Alignment",
+  "UCDP (25-999 deaths) $\\times$ Exports",
+  "UCDP (1,000+ deaths) $\\times$ Exports",
+  "UCDP (25-999 deaths) $\\times$ Migrants",
+  "UCDP (1,000+ deaths) $\\times$ Migrants"
+)
+names(coef_map) <- 
+  c(
+    names(coef(fit5))[c(11:12, 1:10)],
+    "kappavv:maxintensity1",
+    "kappavv:maxintensity2",
+    "asinh(exports):maxintensity1",
+    "asinh(exports):maxintensity2",
+    "asinh(migrants):maxintensity1",
+    "asinh(migrants):maxintensity2"
+  )
+m1 <- list(fit5, fit6, fit7, fit8)
+names(m1) <- paste0("Model ", 5:8)
+# m2 <- list(fit5, fit6, fit7, fit8)
+# names(m2) <- paste0("Model ", 5:8)
+texreg(
+  m1,
+  include.ci = F,
+  caption = "OLS Estimates",
+  caption.above = T,
+  custom.header = list("Total ODA Commitments" = 1:4),
+  custom.coef.map = coef_map,
+  custom.gof.rows = list(
+    "Donor FE" = rep("Yes", len = 4),
+    #"Dyadic FE" = rep("No", len = 4),
+    "Year FE" = rep("Yes", len = 4)
+  ),
+  digits = 3,
+  stars = c(0.001, 0.01, 0.05, 0.1),
+  include.rsquared = F
+)
 ```
 
 
+To test this, additional models were estimated where the conflict measure was broken down by intensity and then interacted with each of the dyadic factors of interest. The UCDP dataset permits distinguishing between "low intensity" conflicts (between 25-999 battle deaths) and "high intensity" conflicts (greater than 1,000 battle deaths). Of all the conflicts coded in the data sample, 73.8% were classified as low intensity while the remaining 26.2% were classified as high intensity. Table 4 shows the estimates from these updated regression models.
+
+Figures 4-6 show how the marginal effect of each kind of conflict on aid allocations varies given each of the dyadic factors. Figure 4 shows, in the left panel, the marginal effect of low intensity conflicts given the degree of foreign policy alignment between a donor and recipient. The right panel shows the same, but for high intensity conflicts. While donor reactions to low intensity conflicts are not different from zero across the range of foreign policy alignment scores, this is not the case for high intensity conflicts. Instead, consistent with H1, donors give greater foreign aid in response to conflict with strategic opponents when those conflicts are high intensity.
+
+```{r fig.height=4.5, fig.width=8, fig.cap="Marginal effect of UCDP conflict measure, broken down by intensity level, given foreign policy alignment."}
+library(patchwork)
+p1 <- meplot(fit6, var2 = "kappavv", 
+       var1 = "maxintensity1",
+       int = "kappavv:maxintensity1",
+       vcov = vcov(fit6)) +
+  labs(
+    x = "Foreign Policy Alignment",
+    y = "Marginal Effect of Civil War",
+    caption = "95% CIs shown",
+    title = "25-999 Battle Deaths"
+  ) +
+  geom_rug(
+    data = mf,
+    aes(x = kappavv,
+        y = NULL),
+    color = "darkblue"
+  )
+p2 <- meplot(fit6, var2 = "kappavv", 
+       var1 = "maxintensity2",
+       int = "kappavv:maxintensity2",
+       vcov = vcov(fit6)) +
+  labs(
+    x = "Foreign Policy Alignment",
+    y = "Marginal Effect of Civil War",
+    caption = "95% CIs shown",
+    title = "> 1,000 Battle Deaths"
+  ) +
+  geom_rug(
+    data = mf,
+    aes(x = kappavv,
+        y = NULL),
+    color = "darkblue"
+  )
+p1 + p2 &
+  scale_y_continuous(
+    labels = scales::percent,
+    limits = c(-0.65, 2.1)
+  )
+```
+
+Figure 5 shows how the marginal effects of low and high intensity conflicts, respectively, vary given dyadic donor exports to recipients. In the left panel, we can see that across the range of donor exports to developing countries, the effect of low level conflicts is not different from zero. However, in the right panel we can see that donor responses to high intensity conflicts are positive and statistically significant. Moreover, the effect increases in magnitude in proportion to the value of total exports from a donor consumed by a recipient country.
+
+```{r fig.height=4.5, fig.width=8, fig.cap="Marginal effect of UCDP conflict measure, broken down by intensity level, given donor exports to recipients."}
+p1 <- meplot(fit7, var2 = "asinh(exports)", 
+       var1 = "maxintensity1",
+       int = "asinh(exports):maxintensity1",
+       vcov = vcov(fit7)) +
+  labs(
+    x = "Dyadic Donor Exports",
+    y = "Marginal Effect of Civil War",
+    caption = "95% CIs shown",
+    title = "25-999 Battle Deaths"
+  ) +
+  geom_rug(
+    data = mf,
+    aes(x = `asinh(exports)`,
+        y = NULL),
+    color = "darkblue"
+  )
+p2 <- meplot(fit7, var2 = "asinh(exports)", 
+       var1 = "maxintensity2",
+       int = "asinh(exports):maxintensity2",
+       vcov = vcov(fit7)) +
+  labs(
+    x = "Dyadic Donor Exports",
+    y = "Marginal Effect of Civil War",
+    caption = "95% CIs shown",
+    title = "> 1,000 Battle Deaths"
+  ) +
+  geom_rug(
+    data = mf,
+    aes(x = `asinh(exports)`,
+        y = NULL),
+    color = "darkblue"
+  )
+p1 + p2 &
+  scale_y_continuous(
+    labels = scales::percent,
+    limits = c(-0.65, 6)
+  )
+```
+
+Finally, Figure 6 shows variation in the effect of conflicts by their intensity given the number of migrants donors host from an individual recipient country. Aside from cases where a donor hosts a very small number of migrants, the overall effect of low intensity conflict is not different from zero. Conversely, high intensity conflicts in countries that have a large population of migrants living in a donor draw greater foreign aid in proportion to the size of the bilateral migrant population.
+
+```{r fig.height=4.5, fig.width=8, fig.cap="Marginal effect of UCDP conflict measure, broken down by intensity level, given migrant population size by national origin."}
+p1 <- meplot(fit8, var2 = "asinh(migrants)", 
+       var1 = "maxintensity1",
+       int = "asinh(migrants):maxintensity1",
+       vcov = vcov(fit8)) +
+  labs(
+    x = "Migrant Population by National Origin (asinh)",
+    y = "Marginal Effect of Civil War",
+    caption = "95% CIs shown",
+    title = "25-999 Battle Deaths"
+  ) +
+  geom_rug(
+    data = mf,
+    aes(x = `asinh(migrants)`,
+        y = NULL),
+    color = "darkblue"
+  )
+p2 <- meplot(fit8, var2 = "asinh(migrants)", 
+       var1 = "maxintensity2",
+       int = "asinh(migrants):maxintensity2",
+       vcov = vcov(fit8)) +
+  labs(
+    x = "Migrant Population by National Origin (asinh)",
+    y = "Marginal Effect of Civil War",
+    caption = "95% CIs shown",
+    title = "> 1,000 Battle Deaths"
+  ) +
+  geom_rug(
+    data = mf,
+    aes(x = `asinh(migrants)`,
+        y = NULL),
+    color = "darkblue"
+  )
+p1 + p2 &
+  scale_y_continuous(
+    labels = scales::percent,
+    limits = c(-0.65, 4)
+  ) &
+  xlim(c(0, 13))
+```
+
+These additional findings strengthen the evidence in support of hypotheses 1, 2, and 3. However, given the observational nature of the data, the usual caution is warranted. Future research is needed to examine underlying mechanisms with an eye toward causal identification. This is especially so in the case of aid and migration. Two complementary but nonetheless distinct mechanisms were proposed to explain why dyadic migrant population size might condition donor reactions to civil war. The analysis as presented here is consistent with both, but the importance of one or the other remains uncertain. It is the hope of this author that this study will motivate future research to address these issues.
+
 # Conclusion
 
-The motivations behind why conflict-affected countries attract foreign aid has direct relevance for normative and policy related questions about aid's impact on conflict processes. Over the past decade or so, scholars have started to gain a better hold of the donor and recipient-level factors that shape donor reactions to civil war [@ballaReinhardt2008; @everett2016; @everettTirone2021]. However *dyadic* factors have gone overlooked. 
+The motivations behind why conflict-affected countries attract foreign aid has direct relevance for normative and policy related questions about aid's impact on conflict processes. Over the past decade or so, scholars have started to gain a better hold of the donor and recipient-level factors that shape donor reactions to civil war [@ballaReinhardt2008; @everett2016; @everettTirone2021]. However, *dyadic* factors have gone overlooked. 
 
-This study provides an exploratory analysis of three such dyadic factors: (1) foreign policy alignment, (2) commercial ties, and (3) immigration. The results suggest that all three condition how donor governments respond to conflict in developing countries. Each of the identified regularities identified here is deserving of their own study to better tease out the underlying mechanisms and downstream implications for peace in aid recipients. What exactly is the foreign policy calculus that decisionmakers engage in with respect to these dyadic factors? And do these factors improve aid efficacy?
+This study fills this gap by examining three dyadic factors: (1) foreign policy alignment, (2) commercial ties, and (3) migration. The results suggest that all three condition when conflict attracts aid from donor governments. 
 
-With respect to mechanisms, past research on other kinds of intervention or types of emergencies provide a good place to start. First, for foreign policy alignment, as discussed earlier in this note @chengMinhas2021 recently show that donor governments provide disproportionately more foreign aid to strategic opponents than to more politically aligned counties in the event of natural disasters. Their argument for why is rooted in donor opportunism. The occurrence of an emergency puts the aid recipient in a position of vulnerability. That position, in turn, provides a donor government with an opportunity to leverage political concessions that a recipient would not otherwise have agreed to. 
+First, for foreign policy alignment, @chengMinhas2021 recently show that donor governments provide disproportionately more foreign aid to strategic opponents than to more politically aligned counties in the event of natural disasters. Their argument for why is rooted in donor opportunism. The occurrence of an emergency puts the aid recipient in a position of vulnerability. That position, in turn, provides a donor government with an opportunity to gain influence with a recipient that otherwise would have remained recalcitrant. 
 
-The results presented here suggest that the imperative to use an emergency to gain leverage over opponents may extend to civil wars as well. In the analysis, when conditioning the effect of conflict on donor giving on foreign policy alignment, it was found that opponents got more aid when experiencing conflict while aligned countries received no such boost in ODA.
+The results presented here suggest that the imperative to use an emergency to gain leverage over opponents may extend to civil wars. In the analysis, when conditioning the effect of conflict on donor giving on foreign policy alignment, it was found that opponents got more aid when experiencing conflict while aligned countries received no such boost in ODA.
 
 Second, with respect to trade, the aid literature has long recognized the commercial motivations of donor governments, but the role that these interests play in determining donor reactions to conflict has not been explored. The findings presented here suggest donor reactions to conflict are partly predicated on preserving economic ties. This aligns with other studies showing that other kinds of peace-keeping or military interventions are linked to commercial goals [@stojekTir2015; @stojekChacha2015].
 
 Finally, with respect to immigration, the aid literature has recently recognized the links between aid and immigration policy and migrant mobilization [@bermeoLeblang2015]. The argument is that donors seek to use aid to limit demand for immigration while at the same time they may experience pressure from the migrants they already host to provide aid to their homelands. The analysis presented here suggests that these same factors may condition how donors react to conflict. Conflicts are well-known for their ability to lead to increased outflows of migrants. This not only includes refugees but also economically motivated migrants as ongoing conflict stunts economic growth and limits opportunities for citizens who remain. These facts likely put pressure on donor governments to provide extra assistance to migrant-sending countries experiencing conflict. At the same time, larger migrant diasporas may be better able to lobby their host countries to send more aid when their homelands experience conflict.
 
-It is difficult to parse these mechanisms empirically since they both imply the same hypothesis, namely, that conflict-affected countries will receive more aid conditional on the size of the migrant diaspora hosted by the donor government. In the analysis, this is just the pattern that is identified. Donors give more aid to conflict-affected countries that have larger migrant diasporas living in the donor. Conversely, donors give less aid to conflict-affect countries that have only small migrant diasporas living in the donor. Future research is needed to isolate the effect of anti-immigration policy from migrant mobilization in driving these results.
+The results are consistent with these arguments. Donors give more aid to conflict-affected countries that have larger migrant diasporas living in the donor. Conversely, donors give less aid to conflict-affect countries that have only small migrant diasporas living in the donor. Future research is needed to isolate the effect of anti-immigration policy from migrant mobilization in driving these results.
 
-It is this author's hope that the regularities identified here will expand the scope of future research to consider how and why dyadic factors influence whether conflict attracts aid, above and beyond the characteristics of donors or recipients alone. Understanding *why* donors respond to conflict as they do is a necessary step in forming an overall picture of when and where aid builds or undermines peace.
+It is this author's hope that the regularities identified here will expand the scope of future research on when conflict attracts foreign aid. Understanding *why* donors respond to conflict as they do is a necessary step in forming an overall picture of when and where aid builds or undermines peace. 
 
+\clearpage
 
 # References
-<!--
+
 \setlength{\parindent}{-0.2in}
 \setlength{\leftskip}{0.2in}
 \setlength{\parskip}{8pt}
 \vspace*{-0.2in}
 \noindent
--->
+
